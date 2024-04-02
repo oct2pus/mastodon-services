@@ -1,0 +1,21 @@
+[Unit]
+Description=mastodon-streaming.service
+Wants=network-online.target
+After=NetworkManager.service network.target network-online.target
+RequiresMountsFor=/var/lib/containers/storage /var/run/containers/storage
+
+# %E is "the XDG_CONFIG path"
+#docker run --net external_network --net internal_network --restart always --env-file .env.production --health-cmd "CMD-SHELL,wget -q --spider --proxy=off localhost:4000/api/v1/streaming/health || exit 1" -p 127.0.0.1:4000:4000 ghcr.io/mastodon/mastodon:v4.2.7 node ./streaming
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n 
+Restart=on-failure
+TimeoutStopSec=70
+ExecStart=/usr/bin/podman run -d --name mastodon-streaming --net external_network --net internal_network --restart always --env-file %h/live/.env.production --health-cmd "CMD-SHELL,wget -q --spider --proxy=off localhost:4000/api/v1/streaming/health || exit 1" -p 127.0.0.1:4000:4000 localhost/jademoe node ./streaming
+
+ExecStop=/usr/bin/podman stop mastodon-web
+ExecStopPost=/usr/bin/podman rm mastodon-web
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
