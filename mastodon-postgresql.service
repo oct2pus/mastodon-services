@@ -10,7 +10,7 @@ RequiresMountsFor=/var/lib/containers/storage /var/run/containers/storage
 Environment=PODMAN_SYSTEMD_UNIT=%n 
 Restart=on-failure
 TimeoutStopSec=70
-ExecStart=/usr/bin/podman run --net internal_network --restart always --shm-size 256mb --health-cmd CMD,pg_isready,-U,postgres -v ./postgres14:/var/lib/postgresql/data -e POSTGRES_HOST_AUTH_METHOD=trust postgres:14 --tag mastodon-postgres
+ExecStart=/usr/bin/podman run --name mastodon-postgresql --net internal_network --restart always --shm-size 256mb --health-cmd CMD,pg_isready,-U,postgres -v mastodon-postgresql:/var/lib/postgresql/data -e POSTGRES_HOST_AUTH_METHOD=trust postgres:14 
 ExecStop=/usr/bin/podman stop mastodon-postgres
 ExecStopPost=/usr/bin/podman rm mastodon-postgres
 Type=oneshot
