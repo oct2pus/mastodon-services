@@ -1,0 +1,21 @@
+[Unit]
+Description=mastodon-sidekiq.service
+Wants=network-online.target
+After=NetworkManager.service network.target network-online.target
+RequiresMountsFor=/var/lib/containers/storage /var/run/containers/storage
+
+# %E is "the XDG_CONFIG path"
+# docker run --net external_network --net internal_network --restart always --env-file .env.production -v ./public/system:/mastodon/public/system --health-cmd "CMD-SHELL,ps aux | grep '[s]idekiq 6' || false" ghcr.io/mastodon/mastodon:v4.2.7 bundle exec sidekiq
+
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n 
+Restart=on-failure
+TimeoutStopSec=70
+ExecStart=/usr/bin/podman run -d --name mastodon-sidekiq --net external_network --net internal_network --restart always --env-file %h/live/.env.production --health-cmd "CMD-SHELL,ps aux | grep '[s]idekiq 6' || false" localhost/jademoe bundle exec sidekiq
+ExecStop=/usr/bin/podman stop mastodon-sidekiq
+ExecStopPost=/usr/bin/podman rm mastodon-sidekiq
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
