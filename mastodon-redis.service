@@ -1,0 +1,20 @@
+[Unit]
+Description=mastodon-redis.service
+Wants=network-online.target
+After=NetworkManager.service network.target network-online.target
+RequiresMountsFor=/var/lib/containers/storage /var/run/containers/storage
+
+# %E is "the XDG_CONFIG path"
+# docker run --net internal_network --restart always --health-cmd CMD,redis-cli,ping -v ./redis:/data redis:7-alpine
+[Service]
+Environment=PODMAN_SYSTEMD_UNIT=%n 
+Restart=on-failure
+TimeoutStopSec=70
+ExecStart=/usr/bin/podman run -d --name mastodon-redis --net internal_network --restart always --health-cmd CMD,redis-cli,ping -v mastodon-redis:/data redis:7
+ExecStop=/usr/bin/podman stop mastodon-redis
+ExecStopPost=/usr/bin/podman rm mastodon-redis
+Type=oneshot
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
