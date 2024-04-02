@@ -12,8 +12,8 @@ Restart=on-failure
 TimeoutStopSec=70
 ExecStart=/usr/bin/podman run -d --name mastodon-streaming --net external_network --net internal_network --restart always --env-file %h/live/.env.production --health-cmd "CMD-SHELL,wget -q --spider --proxy=off localhost:4000/api/v1/streaming/health || exit 1" -p 127.0.0.1:4000:4000 localhost/jademoe node ./streaming
 
-ExecStop=/usr/bin/podman stop mastodon-web
-ExecStopPost=/usr/bin/podman rm mastodon-web
+ExecStop=/usr/bin/podman stop mastodon-streaming
+ExecStopPost=/usr/bin/podman rm mastodon-streaming
 Type=oneshot
 RemainAfterExit=yes
 
