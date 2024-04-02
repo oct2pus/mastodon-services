@@ -10,7 +10,7 @@ RequiresMountsFor=/var/lib/containers/storage /var/run/containers/storage
 Environment=PODMAN_SYSTEMD_UNIT=%n 
 Restart=on-failure
 TimeoutStopSec=70
-ExecStart=/usr/bin/podman run -d --name mastodon-web -net external_network --net internal_network --restart always --env-file %h/live/.env.production --health-cmd "CMD-SHELL,wget -q --spider --proxy=off localhost:3000/health || exit 1" -p 127.0.0.1:3000:3000 -v %h/live/public/system localhost/jademoe bundle exec puma -C config/puma.rb 
+ExecStart=/usr/bin/podman run -d --name mastodon-web -net external_network --net internal_network --restart always --env-file %h/live/.env.production --health-cmd "CMD-SHELL,wget -q --spider --proxy=off localhost:3000/health || exit 1" -p 127.0.0.1:3000:3000 -v %h/live/public/system:/mastodon/public/system localhost/jademoe bundle exec puma -C config/puma.rb 
 ExecStop=/usr/bin/podman stop mastodon-web
 ExecStopPost=/usr/bin/podman rm mastodon-web
 Type=oneshot
