@@ -1,0 +1,8 @@
+FROM docker.io/ruby:3.2.3
+Env DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get upgrade -y
+RUN apt-get install apt-transport-https curl git libidn11-dev libldap2-dev -y
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - 
+RUN apt-get install nodejs -y
+RUN corepack enable
+cmd bash
