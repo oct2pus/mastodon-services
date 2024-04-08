@@ -1,0 +1,3 @@
+[submodule "sqlbackups"]
+	path = sqlbackups
+	url = ssh://git.jade.moe:2222/oct2pus/sqlbackups
